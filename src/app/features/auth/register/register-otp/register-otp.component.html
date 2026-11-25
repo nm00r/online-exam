@@ -1,0 +1,48 @@
+<app-stepper [total]="4" [current]="1"></app-stepper>
+
+<h2 class="font-sans text-[30px] font-bold text-heading mb-1">Create Account</h2>
+<p class="text-primary text-[20px] font-semibold font-mono mb-6">Verify OTP</p>
+
+<p class="text-subtext text-sm font-mono mb-6 leading-relaxed">
+  Please enter the 6-digits code we have sent to:<br />
+  <span class="text-heading">{{ email() }}.</span>
+  <a routerLink="/auth/register" [queryParams]="{ focusEmail: true }" class="text-primary underline ml-1">Edit</a>
+</p>
+
+<div class="flex justify-center gap-3 mb-5">
+  @for (digit of otp(); track $index) {
+    <input
+      [id]="'otp-' + $index"
+      type="text"
+      maxlength="1"
+      inputmode="numeric"
+      pattern="[0-9]*"
+      [value]="digit"
+      (keyup)="onKeyUp($event, $index)"
+      [attr.aria-label]="'OTP digit ' + ($index + 1)"
+      class="w-12 h-12 text-center border rounded-[2px] text-heading font-mono text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+      [class.border-primary]="digit"
+      [class.border-border]="!digit"
+    />
+  }
+</div>
+
+@if (localError()) {
+  <p class="field-error text-center mb-4">{{ localError() }}</p>
+}
+
+<app-alert [message]="error() ?? ''"></app-alert>
+
+<p class="text-center text-sm text-subtext font-mono mb-6">
+  @if (resendSeconds() > 0) {
+    You can request another code in: <span class="text-heading">{{ resendSeconds() }}s</span>
+  } @else {
+    <button type="button" (click)="resend()" class="text-primary hover:underline cursor-pointer">
+      Resend code
+    </button>
+  }
+</p>
+
+<button type="button" [disabled]="loading()" (click)="onVerify()" class="btn-secondary disabled:opacity-60">
+  {{ loading() ? 'Verifying...' : 'Verify Code' }}
+</button>

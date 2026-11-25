@@ -1,0 +1,124 @@
+<app-stepper [total]="4" [current]="2"></app-stepper>
+
+<h2 class="font-sans text-[30px] font-bold text-heading mb-1">Create Account</h2>
+<p class="text-primary text-[20px] font-semibold font-mono mb-6">Tell us more about you</p>
+
+<form [formGroup]="form" (ngSubmit)="onNext()" novalidate>
+  <div class="flex gap-4 mb-4">
+    <div class="flex-1">
+      <label for="firstName" class="field-label">
+        First name<span class="text-error ml-0.5">*</span>
+      </label>
+      <input
+        id="firstName"
+        type="text"
+        formControlName="firstName"
+        placeholder="Ahmed"
+        autocomplete="given-name"
+        [class]="'input-field ' + (submitted() && firstName.invalid ? 'error' : '')"
+      />
+      @if (submitted() && firstName.errors?.['required']) {
+        <p class="field-error">Required</p>
+      }
+    </div>
+    <div class="flex-1">
+      <label for="lastName" class="field-label">
+        Last name<span class="text-error ml-0.5">*</span>
+      </label>
+      <input
+        id="lastName"
+        type="text"
+        formControlName="lastName"
+        placeholder="Abdullah"
+        autocomplete="family-name"
+        [class]="'input-field ' + (submitted() && lastName.invalid ? 'error' : '')"
+      />
+      @if (submitted() && lastName.errors?.['required']) {
+        <p class="field-error">Required</p>
+      }
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <label for="username" class="field-label">
+      Username<span class="text-error ml-0.5">*</span>
+    </label>
+    <input
+      id="username"
+      type="text"
+      formControlName="username"
+      placeholder="user123"
+      autocomplete="username"
+      [class]="'input-field ' + (submitted() && username.invalid ? 'error' : '')"
+    />
+    @if (submitted() && username.errors?.['required']) {
+      <p class="field-error">Username is required</p>
+    }
+  </div>
+
+  <div class="mb-6 relative">
+    <label for="phone" class="field-label">Phone</label>
+    <div class="flex items-center h-[46px] border border-border rounded-[2px] focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20 transition-colors bg-white">
+      <button
+        type="button"
+        (click)="toggleDropdown()"
+        class="flex items-center gap-1.5 px-3 h-full text-sm text-heading font-mono flex-shrink-0 hover:bg-gray-50 cursor-pointer"
+        aria-label="Select country code"
+      >
+        <img
+          [src]="'assets/flags/' + selectedCountry().iso2 + '.svg'"
+          [alt]="selectedCountry().name"
+          class="w-5 h-3.5 object-cover rounded-[1px] flex-shrink-0"
+        />
+        <span>{{ selectedCountry().iso2.toUpperCase() }}(+{{ selectedCountry().dialCode }})</span>
+        <lucide-icon [img]="ChevronsUpDown" [size]="14" class="text-subtext"></lucide-icon>
+      </button>
+      <input
+        id="phone"
+        type="tel"
+        formControlName="phone"
+        placeholder="1012345678"
+        autocomplete="tel"
+        class="flex-1 pr-3 py-2 text-sm font-mono text-heading outline-none bg-white placeholder-[#9CA3AF]"
+      />
+    </div>
+
+    @if (dropdownOpen()) {
+      <div class="absolute left-0 right-0 top-full mt-1 bg-white border border-border rounded-[2px] shadow-lg z-20 max-h-60 flex flex-col">
+        <div class="p-2 border-b border-border">
+          <input
+            type="text"
+            [value]="searchQuery()"
+            (input)="onSearchInput($event)"
+            placeholder="Search country or code..."
+            class="w-full px-2.5 py-1.5 text-xs font-mono border border-border rounded-[2px] outline-none focus:border-primary"
+          />
+        </div>
+        <div class="overflow-y-auto flex-1">
+          @for (country of filteredCountries(); track country.iso2) {
+            <button
+              type="button"
+              (click)="selectCountry(country)"
+              class="w-full flex items-center gap-2.5 px-3 py-2 text-left text-xs font-mono hover:bg-[#EFF6FF] transition-colors cursor-pointer"
+              [class.bg-[#EFF6FF]]="country.iso2 === selectedCountry().iso2"
+            >
+              <img
+                [src]="'assets/flags/' + country.iso2 + '.svg'"
+                [alt]="country.name"
+                loading="lazy"
+                class="w-5 h-3.5 object-cover rounded-[1px] flex-shrink-0"
+              />
+              <span class="flex-1 truncate text-heading">{{ country.name }}</span>
+              <span class="text-subtext">+{{ country.dialCode }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <button type="submit" class="btn-secondary">
+    <span>Next</span>
+    <lucide-icon [img]="ChevronRight" [size]="16" [strokeWidth]="2"></lucide-icon>
+  </button>
+</form>

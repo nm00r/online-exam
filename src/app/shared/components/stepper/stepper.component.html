@@ -1,0 +1,31 @@
+<div
+  class="flex items-center mb-8"
+  role="progressbar"
+  [attr.aria-valuenow]="current + 1"
+  [attr.aria-valuemin]="1"
+  [attr.aria-valuemax]="total"
+>
+  @for (step of steps; track step; let i = $index; let last = $last) {
+    <div class="relative flex items-center justify-center flex-shrink-0">
+      @if (i === current) {
+        <div class="absolute w-5 h-5 rotate-45 bg-primary/20 rounded-[1px]"></div>
+      }
+      <div
+        class="relative w-2.5 h-2.5 rotate-45 border-[1.5px] transition-colors"
+        [ngClass]="{
+          'border-primary bg-primary': i <= current,
+          'border-primary/50 bg-white': i > current
+        }"
+      ></div>
+    </div>
+
+    @if (!last) {
+      <div
+        class="flex-1 h-0 mx-1"
+        [ngStyle]="{
+          'border-top': i < current ? '1.5px solid #155DFC' : '1.5px dashed #93C5FD'
+        }"
+      ></div>
+    }
+  }
+</div>
